@@ -1,3 +1,4 @@
+from collections import deque
 
 
 class Node:
@@ -21,29 +22,29 @@ class Node:
     def get_generation(self):
         return self.generation
 
-
-optimal = Node(0, 0, 2**31 - 1)
-
-def backtracking(mach, facula, node):
-    left = node.left_child()
-    right = node.right_child()
-    stack = [left, right]
-    global optimal
-
-    if node.n_mach() == mach and node.n_facula() == facula:
-        optimal = node
-    else:
-        while len(stack) > 0:
-            if stack[0].n_mach() <= mach and stack[0].n_facula() <= facula and stack[0].get_generation() < optimal.get_generation():
-                backtracking(mach, facula, stack[0])
-            stack.pop(0)
+    def empty(self):
+        return self.mach==0 and self.facula==0 and self.generation==0
 
 
 def solution(mach, facula):
+    imach = int(mach)
+    ifacula = int(facula)
     root = Node(1, 1, 0)
-    backtracking(int(mach), int(facula), root)
+    optimal = Node(0, 0, 0)
+    stack = deque([root])
+
+    equal = imach == ifacula and imach > 1
+    zero = imach == 0 or ifacula == 0
+    while len(stack) > 0 and optimal.empty() and not equal and not zero:
+        current = stack.popleft()
+        if current.n_mach() == imach and current.n_facula() == ifacula:
+            optimal = current
+        elif current.n_mach() <= imach and current.n_facula() <= ifacula:
+            stack.append(current.left_child())
+            stack.append(current.right_child())
+
     result = "impossible"
-    if optimal.n_mach() != 0:
+    if not optimal.empty():
         result = str(optimal.get_generation())
 
     return result
