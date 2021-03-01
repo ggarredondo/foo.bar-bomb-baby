@@ -1,20 +1,21 @@
 
 
 def solution(M, F):
-    counter = 0
+    generations = -1
     iM = int(M)
     iF = int(F)
 
-    equal = iM == iF and iM > 1
-    while (iM > 1 or iF > 1) and not equal:
+    while iM > 0 and iF > 0:
         if iM > iF:
-            iM -= iF
+            division = iM // iF
+            iM %= iF
         else:
-            iF -= iM
-        counter += 1
-        equal = iM == iF and iM > 1
+            division = iF // iM
+            iF %= iM
+        generations += division
+    invalid = (iM == 0 and iF > 1) or (iM > 1 and iF == 0)
 
-    result = "impossible"
-    if not equal:
-        result = str(counter)
+    result = str(generations)
+    if invalid:
+        result = "impossible"
     return result
